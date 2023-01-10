@@ -1,5 +1,7 @@
 package com.leetcode.archive;
 
+import java.util.Arrays;
+
 // https://leetcode.com/problems/remove-covered-intervals/
 
 // Given an array intervals where intervals[i] = [li, ri] represent the interval [li, ri),
@@ -8,9 +10,6 @@ package com.leetcode.archive;
 // The interval [a, b) is covered by the interval [c, d) if and only if c <= a and b <= d.
 //
 // Return the number of remaining intervals.
-
-import java.util.Arrays;
-import java.util.Comparator;
 
 // 1 <= intervals.length <= 1000
 // intervals[i].length == 2
