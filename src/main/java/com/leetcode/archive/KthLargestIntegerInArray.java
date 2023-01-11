@@ -15,6 +15,7 @@ import java.util.*;
 public class KthLargestIntegerInArray {
 
     public static void main(String[] args) {
+        test(new String[]{"423", "521", "2", "42"}, 2, "423");
         test(new String[]{"429", "28", "43", "390", "328"}, 3, "328");
         test(new String[]{"1"}, 1, "1");
         test(new String[]{"1", "2"}, 1, "2");
@@ -35,7 +36,7 @@ public class KthLargestIntegerInArray {
         System.out.println();
     }
 
-    public static String kthLargestNumber(String[] nums, int k) {
+    public static String kthLargestNumberSort(String[] nums, int k) {
         k = nums.length - k;
         Arrays.sort(nums, KthLargestIntegerInArray::compare);
         return nums[k];
@@ -48,82 +49,38 @@ public class KthLargestIntegerInArray {
         return s1.length() - s2.length();
     }
 
-    static Map<String, Map<String, Integer>> cache = new HashMap<>();
-
-    private static int cacheCompare(String s1, String s2) {
-        if (s1.length() != s2.length()) {
-            return s1.length() - s2.length();
-        }
-        Map<String, Integer> stringIntegerMap = cache.get(s1);
-        if (stringIntegerMap != null) {
-            Integer integer = stringIntegerMap.get(s2);
-            if (integer != null) {
-                return integer;
-            }
-        }
-        if (s1 == s2) {
-            return 0;
-        }
-        int res = s1.compareTo(s2);
-        if (s1.length() > 4) {
-            if (stringIntegerMap == null) {
-                stringIntegerMap = new HashMap<>();
-                cache.put(s1, stringIntegerMap);
-            }
-            stringIntegerMap.put(s2, res);
-        }
-        return res;
-    }
-
-    public static String kthLargestNumberQuickSelect(String[] nums, int k) {
-        for (int i = 0; i < nums.length; i++) {
-            nums[i].intern();
-        }
+    public static String kthLargestNumber(String[] nums, int k) {
         k = nums.length - k;
         int leftIndex = 0;
         int rightIndex = nums.length - 1;
         while (leftIndex < rightIndex) {
-            int pivotIndex = pivot(nums, leftIndex, rightIndex);
-            if (pivotIndex == k) {
-                return nums[k];
-            }
-            if (k < pivotIndex) {
-                rightIndex = pivotIndex - 1;
+            int lastSmallerIndex = pivot(nums, leftIndex, rightIndex);
+            if (lastSmallerIndex < k) {
+                leftIndex = lastSmallerIndex + 1;
             } else {
-                leftIndex = pivotIndex + 1;
+                rightIndex = lastSmallerIndex;
             }
         }
-        return nums[k];
+        return nums[leftIndex];
     }
 
     private static int pivot(String[] nums, int leftIndex, int rightIndex) {
-        int rand = (int) ((Math.random() * (rightIndex - leftIndex)) + leftIndex);
-        String pivot = nums[rand];
-        nums[rand] = nums[rightIndex];
-        nums[rightIndex] = pivot;
-        int pivotIndex = rightIndex;
-        rightIndex--;
-        while (leftIndex < rightIndex) {
-            String left = nums[leftIndex];
-            String right = nums[rightIndex];
-            if (compare(left, pivot) > 0 && compare(right, pivot) <= 0) {
-                nums[leftIndex] = right;
-                nums[rightIndex] = left;
-                continue;
-            }
-            if (compare(left, pivot) <= 0) {
+        String pivot = nums[(rightIndex - leftIndex) / 2 + leftIndex];
+        leftIndex--;
+        rightIndex++;
+        while (true) {
+            do {
                 leftIndex++;
-                continue;
-            }
-            if (compare(right, pivot) > 0) {
+            } while (compare(nums[leftIndex], pivot) < 0);
+            do {
                 rightIndex--;
+            } while (compare(nums[rightIndex], pivot) > 0);
+            if (leftIndex >= rightIndex) {
+                return rightIndex;
             }
+            String swap = nums[leftIndex];
+            nums[leftIndex] = nums[rightIndex];
+            nums[rightIndex] = swap;
         }
-        if (compare(nums[leftIndex], pivot) > 0) {
-            nums[pivotIndex] = nums[leftIndex];
-            nums[leftIndex] = pivot;
-            pivotIndex = leftIndex;
-        }
-        return pivotIndex;
     }
 }
