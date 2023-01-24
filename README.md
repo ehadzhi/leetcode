@@ -1,2 +1,2 @@
-# leetcode
-https://leetcode.com/ehadzhi/
+## An archive of solved problems.
+### https://leetcode.com/ehadzhi/
